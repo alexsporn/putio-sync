@@ -9,7 +9,6 @@ import logging
 from pid import PidFile
 from putiosync.core import TokenManager, PutioSynchronizer, DatabaseManager
 from putiosync.download_manager import DownloadManager
-from putiosync.watcher import TorrentWatcher
 from putiosync.webif.webif import WebInterface
 
 __author__ = 'Paul Osborne'
@@ -83,16 +82,6 @@ def parse_arguments():
             "just been completed as an argument.  "
             "Example: putio-sync -c 'python /path/to/postprocess.py' /path/to/Downloads"
         ),
-    )
-    parser.add_argument(
-        "-w", "--watch-directory",
-        default=None,
-        type=str,
-        help=(
-            "Directory to watch for torrent or magnet files.  If this option is "
-            "present and new files are added, they will be added to put.io and "
-            "automatically downloaded by the daemon when complete."
-        )
     )
     parser.add_argument(
         "--host",
@@ -193,10 +182,6 @@ def start_sync(args):
     if args.post_process_command is not None:
         download_manager.add_download_completion_callback(
             build_postprocess_download_completion_callback(args.post_process_command))
-
-    if args.watch_directory is not None:
-        torrent_watcher = TorrentWatcher(args.watch_directory, putio_client)
-        torrent_watcher.start()
 
     filter_compiled = None
     if args.filter is not None:
