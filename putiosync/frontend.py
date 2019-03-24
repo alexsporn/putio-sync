@@ -219,7 +219,7 @@ def main():
     args = parse_arguments()
 
     if args.pid is not None:
-        with PidFile(args.pid):
+        with PidFile(args.pid, "/tmp/"):
             return start_sync(args)
     else:
         return start_sync(args)
